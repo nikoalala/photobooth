@@ -92,6 +92,9 @@ $imagelist = ($config['newest_first'] === true) ? array_reverse($images) : $imag
 					<?php endif; ?>
 
 					<a href="#" class="btn takePic"><i class="fa fa-camera"></i> <span data-l10n="takePhoto"></span></a>
+					<a href="#" class="btn takeGIFbtn"><i class="fa fa-film"></i><span> Souhaitez-vous vous prendre des GIF en même temps ? </span><input disabled type="checkbox" id="takeGIF" name="takeGIF" value="takeGIF"></a>
+					
+    				
 				<?php endif; ?>
 			</div>
 
@@ -129,7 +132,7 @@ $imagelist = ($config['newest_first'] === true) ? array_reverse($images) : $imag
 				<video id="video--view" autoplay playsinline></video>
 
 				<div id="counter">
-					<canvas id="video--sensor"</canvas>
+					<canvas id="video--sensor"></canvas>
 				</div>
 				<div class="cheese"></div>
 				<div class="loading"></div>

@@ -51,11 +51,6 @@ const photoBooth = (function () {
         window.location.reload();
     }
 
-    // Returns true when timeOut is pending
-    public.isTimeOutPending = function(){
-		return (typeof timeOut !== 'undefined');
-	}
-
     // timeOut function
     public.resetTimeOut = function () {
         clearTimeout(timeOut);
@@ -76,8 +71,6 @@ const photoBooth = (function () {
         gallery.find('.gallery__inner').hide();
         $('.spinner').hide();
         $('.send-mail').hide();
-        $('#video--view').hide();
-        $('#video--sensor').hide();
         public.resetMailForm();
     }
 
@@ -89,6 +82,21 @@ const photoBooth = (function () {
 
         resultPage.hide();
         startPage.addClass('open');
+
+        const getMedia = (navigator.mediaDevices.getUserMedia || navigator.mediaDevices.webkitGetUserMedia || navigator.mediaDevices.mozGetUserMedia || false);
+
+        if (!getMedia) {
+            return;
+        }
+
+        getMedia.call(navigator.mediaDevices, webcamConstraints)
+            .then(function (stream) {
+                videoView.srcObject = stream;
+                public.stream = stream;
+            })
+            .catch(function (error) {
+                console.log('Could not get user media: ', error)
+            });
     }
 
     public.openNav = function () {
@@ -103,14 +111,8 @@ const photoBooth = (function () {
         $('#mySidenav').toggleClass('sidenav--open');
     }
 
-    public.startVideo = function () {
+    public.startVideo = function (photoStyle) {
         if (!navigator.mediaDevices) {
-            return;
-        }
-
-        const getMedia = (navigator.mediaDevices.getUserMedia || navigator.mediaDevices.webkitGetUserMedia || navigator.mediaDevices.mozGetUserMedia || false);
-
-        if (!getMedia) {
             return;
         }
 
@@ -118,21 +120,33 @@ const photoBooth = (function () {
             $('#video--view').addClass('flip-horizontal');
         }
 
-        getMedia.call(navigator.mediaDevices, webcamConstraints)
-            .then(function (stream) {
-                $('#video--view').show();
-                videoView.srcObject = stream;
-                public.stream = stream;
-            })
-            .catch(function (error) {
-                console.log('Could not get user media: ', error)
+        $('#video--view').show();
+        
+        var duree = 9000;
+        
+        if(photoStyle == "collage" && !nextCollageNumber) {
+            duree = 25000
+        }
+        
+        if(!nextCollageNumber) {
+            public.recordVideoGIF(videoView, duree).then(function(base64data) {              
+                  const data = {
+                    filter: imgFilter,
+                    style: "webm",
+                    webmGif: base64data
+                };
+
+                jQuery.post('api/takeGif.php', data).done(function (result) {
+                    console.log("gif envoyé", result);
+                });
             });
+        }
     }
 
     public.stopVideo = function () {
         if (public.stream) {
             const track = public.stream.getTracks()[0];
-            track.stop();
+            //track.stop();
             $('#video--view').hide();
         }
     }
@@ -146,7 +160,7 @@ const photoBooth = (function () {
         }
 
         if (config.previewFromCam) {
-            public.startVideo();
+            public.startVideo(photoStyle);
         }
 
         loader.addClass('open');
@@ -171,18 +185,9 @@ const photoBooth = (function () {
             $('<p>').text(`${nextCollageNumber + 1} / ${config.collage_limit}`).appendTo('.cheese');
         }
 
-        if (config.previewFromCam && config.previewCamTakesPic && !public.stream && !config.dev) {
-            console.log('No preview by device cam available!');
-
-            public.errorPic({
-                error: 'No preview by device cam available!'
-            });
-
-        } else {
-            setTimeout(() => {
-                public.takePic(photoStyle);
-            }, config.cheese_time);
-        }
+        setTimeout(() => {
+            public.takePic(photoStyle);
+        }, config.cheese_time);
     }
 
     // take Picture
@@ -263,7 +268,6 @@ const photoBooth = (function () {
             $('.spinner').hide();
             $('.loading').empty();
             $('.cheese').empty();
-            $('#video--view').hide();
             $('#video--sensor').hide();
             loader.addClass('error');
             $('.loading').append($('<p>').text(L10N.error));
@@ -503,6 +507,56 @@ const photoBooth = (function () {
         }
     }
 
+    public.recordVideoGIF = function(canvas, time) {
+        var recordedChunks = [];
+        return new Promise(function (res, rej) {
+            var stream = canvas.captureStream(10 /*fps*/);
+            mediaRecorder = new MediaRecorder(stream, {
+                mimeType: "video/webm; codecs=vp9"
+            });
+    
+            //ondataavailable will fire in interval of `time || 4000 ms`
+            mediaRecorder.start(time || 4000);
+    
+            mediaRecorder.ondataavailable = function (e) {
+                recordedChunks.push(event.data);
+                if (mediaRecorder.state === 'recording') {
+                    // after stop data avilable event run one more time
+                    mediaRecorder.stop();
+                }
+    
+            }
+    
+            mediaRecorder.onstop = function (event) {
+                var blob = new Blob(recordedChunks, {
+                    type: "video/webm"
+                });
+                
+                var reader = new FileReader();
+                reader.readAsDataURL(blob); 
+                reader.onloadend = function() {
+                    var base64data = reader.result;                
+                    console.log(base64data);
+                    res(base64data);
+                }
+                
+                
+            }
+        })
+    }
+
+    // Modifier la checkbox sur clic bouton
+    $('.takeGIFbtn').on('click', function (e) {
+        e.preventDefault();
+        console.log("click", $('#takeGIF').is(":checked"))
+        $('#takeGIF').prop("checked", !$('#takeGIF').is(":checked"));
+    });
+
+    $('#takeGIF').on('click', function (e) {
+        e.preventDefault();
+        //$('#takeGIF').prop("checked", !$('#takeGIF').is(":checked"));
+    });
+
     //Filter
     $('.imageFilter').on('click', function () {
         public.toggleNav();
@@ -638,6 +692,7 @@ const photoBooth = (function () {
     });
 
     $(document).on('keyup', function (ev) {
+        console.log(ev.keyCode, config.photo_key, parseInt(config.photo_key, 10))
         if (config.photo_key && parseInt(config.photo_key, 10) === ev.keyCode) {
             public.thrill('photo');
         }
