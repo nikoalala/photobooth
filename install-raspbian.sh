@@ -181,7 +181,7 @@ then
     apt install -y yarn
 
     info "### Now we are going to install Photobooth."
-    git clone https://github.com/andreknieriem/photobooth $INSTALLFOLDER
+    git clone https://github.com/nikoalala/photobooth $INSTALLFOLDER
     cd $INSTALLFOLDERPATH
     LATEST_VERSION=$( git describe --tags `git rev-list --tags --max-count=1` )
     info "### We ar installing version $LATEST_VERSION".
