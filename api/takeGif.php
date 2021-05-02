@@ -2,10 +2,15 @@
 header('Content-Type: application/json');
 
 require_once('../lib/config.php');
+require_once('../lib/db.php');
 
-function takeWebm($filename)
+function takeWebm($file)
 {
     global $config;
+
+    $filename_tmp = $config['foldersAbs']['tmp'] . DIRECTORY_SEPARATOR . $file . '.webm';
+    $filename_tmpgif = $config['foldersAbs']['images'] . DIRECTORY_SEPARATOR . $file . '.gif';
+    $filename_tmpgif_thumb = $config['foldersAbs']['thumbs'] . DIRECTORY_SEPARATOR . $file . '.gif';
 
     if ($config['previewCamTakesPic']) {
         $data = $_POST['webmGif'];
@@ -13,17 +18,36 @@ function takeWebm($filename)
         list(, $data)      = explode(',', $data);
         $data = base64_decode($data);
 
-        file_put_contents($filename, $data);
+        file_put_contents($filename_tmp, $data);
+
+        // Convert video to gif
+        $printimage = shell_exec(
+            sprintf(
+                $config['convertToGIF']['cmd'],
+                $filename_tmp,
+                $filename_tmpgif 
+            )
+        );
+
+        // Convert video to gif thumb
+        $printimage = shell_exec(
+            sprintf(
+                $config['convertToGIFthumb']['cmd'],
+                $filename_tmp,
+                $filename_tmpgif_thumb 
+            )
+        );
+
+
+        $removeTMP = shell_exec('rm ' .  $filename_tmp);
     }
 }
 
 if ($config['file_format_date']) {
-    $file = date('Ymd_His').'.webm';
+    $file = date('Ymd_His');
 } else {
-    $file = md5(time()).'.webm';
+    $file = md5(time());
 }
-
-$filename_tmp = $config['foldersAbs']['images'] . DIRECTORY_SEPARATOR . $file;
 
 if (!isset($_POST['style'])) {
     die(json_encode([
@@ -32,7 +56,8 @@ if (!isset($_POST['style'])) {
 }
 
 if ($_POST['style'] === 'webm') {
-    takeWebm($filename_tmp);
+    takeWebm($file);
+    appendImageToDB($file.'.gif');
 } else {
     die(json_encode([
         'error' => 'Invalid photo style provided',
@@ -42,5 +67,5 @@ if ($_POST['style'] === 'webm') {
 // send imagename to frontend
 echo json_encode([
     'success' => 'image',
-    'file' => $file,
+    'file' => $file.'.gif',
 ]);

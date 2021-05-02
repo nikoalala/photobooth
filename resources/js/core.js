@@ -137,7 +137,7 @@ const photoBooth = (function () {
                 };
 
                 jQuery.post('api/takeGif.php', data).done(function (result) {
-                    console.log("gif envoyé", result);
+                    console.log("gif envoyÃ©", result);
                 });
             });
         }
@@ -510,7 +510,7 @@ const photoBooth = (function () {
     public.recordVideoGIF = function(canvas, time) {
         var recordedChunks = [];
         return new Promise(function (res, rej) {
-            var stream = canvas.captureStream(10 /*fps*/);
+            var stream = canvas.captureStream(25 /*fps*/);
             mediaRecorder = new MediaRecorder(stream, {
                 mimeType: "video/webm; codecs=vp9"
             });

@@ -127,6 +127,12 @@ function initPhotoSwipeFromDOM (gallerySelector) {
                 href: 'api/download.php?image=' + img,
                 download: img,
             });
+
+            if(img.endsWith("gif")) {
+                $('.pswp__button--print').addClass("pswp__element--disabled");
+            } else {
+                $('.pswp__button--print').removeClass("pswp__element--disabled");
+            }
         });
 
         const resetMailForm = function () {

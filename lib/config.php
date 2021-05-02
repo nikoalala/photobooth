@@ -14,6 +14,14 @@ $cmds = [
         'print' => [
             'cmd' => 'mspaint /pt "%s"',
             'msg' => '',
+        ],
+        'convertToGIF' => [
+            'cmd' => 'ffmpeg.exe -i %s -f gif %s',
+            'msg' => '',
+        ],
+        'convertToGIFthumb' => [
+            'cmd' => 'ffmpeg.exe -i %s -f gif -vf scale=501:-1 %s',
+            'msg' => '',
         ]
     ],
     'linux' => [
@@ -23,6 +31,14 @@ $cmds = [
         ],
         'print' => [
             'cmd' => 'lp -o landscape -o fit-to-page %s',
+            'msg' => '',
+        ],
+        'convertToGIF' => [
+            'cmd' => 'ffmpeg -i %s -f gif %s',
+            'msg' => '',
+        ],
+        'convertToGIFthumb' => [
+            'cmd' => 'ffmpeg -i %s -f gif -vf scale=501:-1 %s',
             'msg' => '',
         ]
     ],
@@ -55,6 +71,10 @@ $config['take_picture']['cmd'] = $cmds[$os]['take_picture']['cmd'];
 $config['take_picture']['msg'] = $cmds[$os]['take_picture']['msg'];
 $config['print']['cmd'] = $cmds[$os]['print']['cmd'];
 $config['print']['msg'] = $cmds[$os]['print']['msg'];
+$config['convertToGIF']['cmd'] = $cmds[$os]['convertToGIF']['cmd'];
+$config['convertToGIF']['msg'] = $cmds[$os]['convertToGIF']['msg'];
+$config['convertToGIFthumb']['cmd'] = $cmds[$os]['convertToGIFthumb']['cmd'];
+$config['convertToGIFthumb']['msg'] = $cmds[$os]['convertToGIFthumb']['msg'];
 
 $config['collage_limit'] = 4;
 

@@ -239,6 +239,20 @@ EOF
 
 fi
 
+
+echo -e "\033[0;33m### You can save GIF files when you take a photo, but we need to convert video to gif."
+read -p "### Do you like to install ffmpeg from snapd? [y/N] " -n 1 -r
+echo -e "\033[0m"
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+    info "### Ok, installing snapd"
+    apt install snapd
+
+    info "### Then, installing ffmpeg"
+    snap install ffmpeg
+fi
+
+
 info "### Congratulations you finished the install process."
 info "### Have fun with your booth, but first restart your Pi."
 
