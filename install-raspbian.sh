@@ -117,7 +117,7 @@ echo "
 @@             &@@  .@@%           %@@.  @@&             @@
 @@             @@   @@               @@   @@             @@
 @@            %@@  @@*               /@@  @@%            @@
-@@            @@%  @@                 @@  %@@            @@
+@@            @@%  @@        V        @@  %@@            @@
 @@            *@@  @@&               &@@  @@*            @@
 @@             @@   @@*             *@@   @@             @@
 @@              @@   @@@           @@@   @@              @@
@@ -239,9 +239,8 @@ EOF
 
 fi
 
-
 echo -e "\033[0;33m### You can save GIF files when you take a photo, but we need to convert video to gif."
-read -p "### Do you like to install ffmpeg from snapd? [y/N] " -n 1 -r
+read -p "### Do you like to install snapd then ffmpeg from snapd? [y/N] " -n 1 -r
 echo -e "\033[0m"
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
@@ -249,7 +248,10 @@ then
     apt install snapd
 
     info "### Then, installing ffmpeg"
-    snap install ffmpeg
+    snap install ffmpeg --classic
+
+    info "### Finally, editing nginx.conf to let large GIF request pass"
+    sed -i '/^http {$/a \\n\t# Disable size check to send large GIF file\n\tclient_max_body_size 0;\n' /etc/nginx/nginx.conf
 fi
 
 

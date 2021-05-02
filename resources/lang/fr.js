@@ -171,5 +171,6 @@ const L10N = {
     'protect_admin': 'Protect admin panel',
     'protect_index': 'Protect start screen',
     'answer_yes': 'Oui',
-    'answer_no': 'Non'
+    'answer_no': 'Non',
+    'gif_save': 'Sauvegarde du GIF...'
 }

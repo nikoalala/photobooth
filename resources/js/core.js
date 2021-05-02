@@ -86,6 +86,7 @@ const photoBooth = (function () {
 
         $('#takeGif_response_no').hide();
         $('#takeGif_response_yes').show();
+        $(".gif-button").hide();
 
         const getMedia = (navigator.mediaDevices.getUserMedia || navigator.mediaDevices.webkitGetUserMedia || navigator.mediaDevices.mozGetUserMedia || false);
 
@@ -134,15 +135,18 @@ const photoBooth = (function () {
         
         if(!nextCollageNumber) {
             if(takeGif) {
+                $(".gif-button").show();
                 public.recordVideoGIF(videoView, duree).then(function(base64data) {              
+
                     const data = {
                         filter: imgFilter,
                         style: "webm",
                         webmGif: base64data
                     };
-
+                    
                     jQuery.post('api/takeGif.php', data).done(function (result) {
                         console.log("gif envoyé", result);
+                        $(".gif-button").hide();
                     });
                 });
             }

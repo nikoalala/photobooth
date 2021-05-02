@@ -143,6 +143,8 @@ $imagelist = ($config['newest_first'] === true) ? array_reverse($images) : $imag
 		<div class="stages" id="result">
 			<a href="#" class="btn homebtn"><i class="fa fa-home"></i> <span data-l10n="home"></span></a>
 			<div class="resultInner hidden">
+				<a href="#" class="btn gif-button"><i class="fa fa-film"></i> <span data-l10n="gif_save"></a>
+
 				<?php if ($config['show_gallery']): ?>
 				<a href="#" class="btn gallery-button"><i class="fa fa-th"></i> <span data-l10n="gallery"></span></a>
 				<?php endif; ?>
