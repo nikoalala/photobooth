@@ -22,7 +22,8 @@ const photoBooth = (function () {
     let timeOut,
         nextCollageNumber = 0,
         currentCollageFile = '',
-        imgFilter = config.default_imagefilter;
+        imgFilter = config.default_imagefilter,
+        takeGif=true;
 
     const modal = {
         open: function (selector) {
@@ -83,6 +84,9 @@ const photoBooth = (function () {
         resultPage.hide();
         startPage.addClass('open');
 
+        $('#takeGif_response_no').hide();
+        $('#takeGif_response_yes').show();
+
         const getMedia = (navigator.mediaDevices.getUserMedia || navigator.mediaDevices.webkitGetUserMedia || navigator.mediaDevices.mozGetUserMedia || false);
 
         if (!getMedia) {
@@ -129,17 +133,19 @@ const photoBooth = (function () {
         }
         
         if(!nextCollageNumber) {
-            public.recordVideoGIF(videoView, duree).then(function(base64data) {              
-                  const data = {
-                    filter: imgFilter,
-                    style: "webm",
-                    webmGif: base64data
-                };
+            if(takeGif) {
+                public.recordVideoGIF(videoView, duree).then(function(base64data) {              
+                    const data = {
+                        filter: imgFilter,
+                        style: "webm",
+                        webmGif: base64data
+                    };
 
-                jQuery.post('api/takeGif.php', data).done(function (result) {
-                    console.log("gif envoyé", result);
+                    jQuery.post('api/takeGif.php', data).done(function (result) {
+                        console.log("gif envoyé", result);
+                    });
                 });
-            });
+            }
         }
     }
 
@@ -539,8 +545,6 @@ const photoBooth = (function () {
                     console.log(base64data);
                     res(base64data);
                 }
-                
-                
             }
         })
     }
@@ -548,13 +552,16 @@ const photoBooth = (function () {
     // Modifier la checkbox sur clic bouton
     $('.takeGIFbtn').on('click', function (e) {
         e.preventDefault();
-        console.log("click", $('#takeGIF').is(":checked"))
-        $('#takeGIF').prop("checked", !$('#takeGIF').is(":checked"));
-    });
-
-    $('#takeGIF').on('click', function (e) {
-        e.preventDefault();
-        //$('#takeGIF').prop("checked", !$('#takeGIF').is(":checked"));
+        console.log("click takegif debut", takeGif);
+        if(takeGif) {
+            $('#takeGif_response_yes').hide();
+            $('#takeGif_response_no').show();
+            takeGif = false;
+        } else {
+            $('#takeGif_response_no').hide();
+            $('#takeGif_response_yes').show();
+            takeGif = true;
+        }
     });
 
     //Filter

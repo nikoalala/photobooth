@@ -32,6 +32,7 @@ const L10N = {
     'general_start_screen_title': 'Page d’accueil (Titre)',
     'general_start_screen_subtitle': 'Page d’accueil (Sous-titre)',
     'takePhoto': 'Prendre une photo!',
+    'takeGIF': ' Souhaitez-vous vous prendre des GIF en même temps ? ',
     'takeCollage': 'Prendre un photo montage!',
     'home': 'Accueil',
     'qr': 'QR Code',
@@ -168,5 +169,7 @@ const L10N = {
     'logout': 'Logout',
     'admin_panel': 'Admin panel',
     'protect_admin': 'Protect admin panel',
-    'protect_index': 'Protect start screen'
+    'protect_index': 'Protect start screen',
+    'answer_yes': 'Oui',
+    'answer_no': 'Non'
 }

@@ -92,7 +92,7 @@ $imagelist = ($config['newest_first'] === true) ? array_reverse($images) : $imag
 					<?php endif; ?>
 
 					<a href="#" class="btn takePic"><i class="fa fa-camera"></i> <span data-l10n="takePhoto"></span></a>
-					<a href="#" class="btn takeGIFbtn"><i class="fa fa-film"></i><span> Souhaitez-vous vous prendre des GIF en même temps ? </span><input disabled type="checkbox" id="takeGIF" name="takeGIF" value="takeGIF"></a>
+					<a href="#" class="btn takeGIFbtn"><i class="fa fa-film"></i><span data-l10n="takeGIF"></span><span id="takeGif_response_yes" data-l10n="answer_yes"></span><span id="takeGif_response_no" data-l10n="answer_no"></span></a>
 					
     				
 				<?php endif; ?>
